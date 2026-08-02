@@ -35,7 +35,62 @@ Item {
     property var selectedSession: selectSession.currentIndex
     property string textConstantSession
     property int loginButtonWidth
-    property Control exposeSession: selectSession
+    property var exposeSession: selectSession
+
+    property var sessionsList: []
+
+    Instantiator {
+        id: sessionInstantiator
+        model: sessionModel
+        delegate: QtObject {
+            readonly property string name: model.name || ""
+            readonly property string file: model.file || ""
+            readonly property string fileName: model.fileName || ""
+            readonly property string path: model.path || ""
+        }
+        onObjectAdded: {
+            var temp = []
+            for (var i = 0; i < count; ++i) {
+                var obj = objectAt(i);
+                if (obj) {
+                    var fName = obj.file || obj.fileName || obj.path || "";
+                    temp.push({ "name": obj.name, "fileName": fName, "index": i });
+                }
+            }
+            sessionButton.sessionsList = temp;
+        }
+        onObjectRemoved: {
+            var temp = []
+            for (var i = 0; i < count; ++i) {
+                var obj = objectAt(i);
+                if (obj) {
+                    var fName = obj.file || obj.fileName || obj.path || "";
+                    temp.push({ "name": obj.name, "fileName": fName, "index": i });
+                }
+            }
+            sessionButton.sessionsList = temp;
+        }
+    }
+
+    function getSelectedSessionFileName() {
+        var idx = selectSession.currentIndex;
+        for (var i = 0; i < sessionsList.length; ++i) {
+            if (sessionsList[i].index === idx) {
+                return sessionsList[i].fileName;
+            }
+        }
+        return "";
+    }
+
+    function setSelectedSessionByFileName(fileName) {
+        for (var i = 0; i < sessionsList.length; ++i) {
+            if (sessionsList[i].fileName === fileName) {
+                selectSession.currentIndex = sessionsList[i].index;
+                return true;
+            }
+        }
+        return false;
+    }
 
     ComboBox {
         id: selectSession

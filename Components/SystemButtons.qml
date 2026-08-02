@@ -35,7 +35,7 @@ RowLayout {
     property var reboot: ["Reboot", config.TranslateReboot || textConstants.reboot, sddm.canReboot]
     property var shutdown: ["Shutdown", config.TranslateShutdown || textConstants.shutdown, sddm.canPowerOff]
 
-    property Control exposedSession
+    property var exposedSession
 
     Repeater {
 

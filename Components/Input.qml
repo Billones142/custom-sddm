@@ -26,12 +26,13 @@ import QtQuick 2.11
 import QtQuick.Layouts 1.11
 import QtQuick.Controls 2.4
 import QtGraphicalEffects 1.0
+import "userSessionStorage.js" as UserSessionStorage
 
 Column {
     id: inputContainer
     Layout.fillWidth: true
 
-    property Control exposeSession: sessionSelect.exposeSession
+    property var exposeSession: sessionSelect.exposeSession
     property bool failed
 
     Item {
@@ -200,6 +201,15 @@ Column {
                 radius: config.RoundCorners || 0
             }
             onAccepted: loginButton.clicked()
+            onTextChanged: {
+                var u = config.AllowBadUsernames == "false" ? text.toLowerCase() : text;
+                var lastSessionFile = UserSessionStorage.getLastSessionForUser(u);
+                if (lastSessionFile !== "") {
+                    sessionSelect.setSelectedSessionByFileName(lastSessionFile);
+                } else {
+                    sessionSelect.exposeSession.currentIndex = sessionModel.lastIndex;
+                }
+            }
             KeyNavigation.down: password
             z: 1
 
@@ -545,7 +555,18 @@ Column {
                 }
             ]
 
-            onClicked: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
+            onClicked: {
+                var sessionFileName = sessionSelect.getSelectedSessionFileName();
+                if (sessionFileName !== "") {
+                    var u = config.AllowBadUsernames == "false" ? username.text.toLowerCase() : username.text;
+                    UserSessionStorage.saveLastSessionForUser(u, sessionFileName);
+                }
+                if (config.AllowBadUsernames == "false") {
+                    sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession);
+                } else {
+                    sddm.login(username.text, password.text, sessionSelect.selectedSession);
+                }
+            }
             Keys.onReturnPressed: clicked()
             Keys.onEnterPressed: clicked()
             KeyNavigation.down: sessionSelect.exposeSession
