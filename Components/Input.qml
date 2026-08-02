@@ -234,11 +234,11 @@ Column {
             width: parent.width
             focus: config.ForcePasswordFocus == "true" ? true : false
             selectByMouse: true
-            echoMode: revealSecret.checked ? TextInput.Normal : TextInput.Password
+            echoMode: revealSecret.checked ? TextInput.Normal : (config.ForceHideCompletePassword == "noecho" ? TextInput.NoEcho : TextInput.Password)
             placeholderText: config.TranslatePlaceholderPassword || textConstants.password
             horizontalAlignment: TextInput.AlignHCenter
             passwordCharacter: "•"
-            passwordMaskDelay: config.ForceHideCompletePassword == "true" ? undefined : 1000
+            passwordMaskDelay: (config.ForceHideCompletePassword == "true" || config.ForceHideCompletePassword == true || config.ForceHideCompletePassword == "noecho") ? 0 : 1000
             renderType: Text.QtRendering
             background: Rectangle {
                 color: "transparent"
