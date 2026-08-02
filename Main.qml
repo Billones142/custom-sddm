@@ -270,5 +270,15 @@ Pane {
             anchors.centerIn: config.FullBlur == "true" ? parent : form
             visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
         }
+
+        Battery {
+            id: batteryIndicator
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.rightMargin: 20
+            textColor: config.MainColor
+            z: 100
+        }
     }
 }
