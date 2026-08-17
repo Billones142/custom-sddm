@@ -35,6 +35,10 @@ Column {
     property var exposeSession: sessionSelect.exposeSession
     property bool failed
 
+    LoggedInUsers {
+        id: loggedInUsers
+    }
+
     Item {
         id: usernameField
 
@@ -83,6 +87,16 @@ Column {
                 highlighted: parent.highlightedIndex === index
                 background: Rectangle {
                     color: selectUser.highlightedIndex === index ? root.palette.highlight : "transparent"
+                }
+                Rectangle {
+                    visible: loggedInUsers.enabled && loggedInUsers.isLoggedIn(model.name)
+                    width: root.font.pointSize * 0.6
+                    height: width
+                    radius: width / 2
+                    color: "#4CAF50"
+                    anchors.left: parent.left
+                    anchors.leftMargin: root.font.pointSize * 0.8
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
@@ -227,6 +241,19 @@ Column {
                     }
                 }
             ]
+        }
+
+        Rectangle {
+            id: loggedInIndicator
+            visible: loggedInUsers.enabled && username.text != "" && loggedInUsers.isLoggedIn(config.AllowBadUsernames == "false" ? username.text.toLowerCase() : username.text)
+            width: root.font.pointSize * 0.7
+            height: width
+            radius: width / 2
+            color: "#4CAF50"
+            anchors.right: username.right
+            anchors.rightMargin: root.font.pointSize * 0.6
+            anchors.verticalCenter: username.verticalCenter
+            z: 2
         }
 
     }

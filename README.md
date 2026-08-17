@@ -152,6 +152,9 @@ And as if that wouldn't still be enough you can **translate every single button 
 **`AllowBadUsernames="false"`**
 *Do not change this! Uppercase letters are generally not allowed in usernames. This option is only for systems that differ from this standard! Also shows username as is instead of capitalized.*
 
+**`ShowLoggedInIndicator="true"`**
+*Show a small green dot next to a username (in the field and in the dropdown) when that user already has an active session running, detected via systemd-logind (`/run/systemd/users/`). Set to "false" to disable. Has no effect on non-systemd systems.*
+
 **`Locale=""`**  
 *The time and date locale should usually be set in your system settings. Only hard set this if something is not working by default or you want a seperate locale setting in your login screen.*  
 
