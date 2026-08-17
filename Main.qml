@@ -31,6 +31,8 @@ import "Components"
 Pane {
     id: root
 
+    property bool loginSucceeded: false
+
     height: config.ScreenHeight || Screen.height
     width: config.ScreenWidth || Screen.ScreenWidth
 
@@ -91,8 +93,12 @@ Pane {
             anchors.centerIn: form
             color: root.palette.window
             visible: config.HaveFormBackground == "true" ? true : false
-            opacity: config.PartialBlur == "true" ? 0.3 : 1
+            opacity: root.loginSucceeded ? 0 : (config.PartialBlur == "true" ? 0.3 : 1)
             z: 1
+
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            }
         }
 
         LoginForm {
@@ -104,7 +110,12 @@ Pane {
             anchors.left: config.FormPosition == "left" ? parent.left : undefined
             anchors.right: config.FormPosition == "right" ? parent.right : undefined
             virtualKeyboardActive: virtualKeyboard.state == "visible" ? true : false
+            opacity: root.loginSucceeded ? 0 : 1
             z: 1
+
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            }
         }
 
         Button {
@@ -114,6 +125,7 @@ Pane {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: implicitHeight
             anchors.horizontalCenter: form.horizontalCenter
+            opacity: root.loginSucceeded ? 0 : 1
             z: 1
             contentItem: Text {
                 text: config.TranslateVirtualKeyboardButton || "Virtual Keyboard"
@@ -123,6 +135,10 @@ Pane {
             background: Rectangle {
                 id: vkbbg
                 color: "transparent"
+            }
+
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
             }
         }
 
@@ -269,6 +285,11 @@ Pane {
             cached: true
             anchors.centerIn: config.FullBlur == "true" ? parent : form
             visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
+            opacity: root.loginSucceeded ? 0 : 1
+
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            }
         }
 
         Battery {
@@ -279,6 +300,22 @@ Pane {
             anchors.rightMargin: 20
             textColor: config.MainColor
             z: 100
+        }
+
+        BusyIndicator {
+            id: loadingIndicator
+            anchors.centerIn: parent
+            running: root.loginSucceeded
+            visible: root.loginSucceeded
+            z: 10
+            palette.dark: config.AccentColor
+        }
+
+        Connections {
+            target: sddm
+            function onLoginSucceeded() {
+                root.loginSucceeded = true;
+            }
         }
     }
 }
