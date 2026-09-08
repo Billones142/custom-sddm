@@ -7,12 +7,25 @@ Row {
     property int percentage: 0
     property string status: "Discharging"
     property color textColor: "white"
+    // Stays false (and the indicator stays hidden) until a capacity read
+    // actually succeeds, so systems with no BAT0 - most desktops - never
+    // show a stuck "0%" indicator.
+    property bool hasBattery: false
+
+    visible: hasBattery
+    width: hasBattery ? implicitWidth : 0
+    height: hasBattery ? implicitHeight : 0
 
     function updateBattery() {
         var xhrCap = new XMLHttpRequest();
         xhrCap.onreadystatechange = function() {
-            if (xhrCap.readyState === XMLHttpRequest.DONE && xhrCap.status === 200) {
-                batteryRow.percentage = parseInt(xhrCap.responseText.trim());
+            if (xhrCap.readyState === XMLHttpRequest.DONE) {
+                if (xhrCap.status === 200) {
+                    batteryRow.hasBattery = true;
+                    batteryRow.percentage = parseInt(xhrCap.responseText.trim());
+                } else {
+                    batteryRow.hasBattery = false;
+                }
             }
         }
         xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity");
