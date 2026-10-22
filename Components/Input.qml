@@ -611,6 +611,8 @@ Column {
         function onLoginSucceeded() {}
         function onLoginFailed() {
             failed = true
+            password.text = ""
+            password.forceActiveFocus()
             resetError.running ? resetError.stop() && resetError.start() : resetError.start()
         }
     }
